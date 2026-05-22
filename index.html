@@ -799,6 +799,7 @@ function renderPembinaan(data){
       <div class="pel-no">${i+1}</div>
       <div class="pel-info">
         <div class="pel-jenis">${r.pembinaan}</div>
+        ${r.perihal?`<div class="pel-meta" style="color:var(--teks2);font-style:italic">${r.perihal}</div>`:''}
         <div class="pel-meta">${r.namaGuru||'-'} · ${r.statusPelapor||'-'}</div>
         ${r.ortuWali?`<div class="pel-meta" style="color:#166534;font-style:italic">Ortu/Wali hadir: ${r.ortuWali}</div>`:''}
         <div class="pel-meta">${fmtTgl(r.tanggal)}</div>
