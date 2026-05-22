@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<title>Pantau Siswa — SMP Negeri 05 Sarolangun</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+
+:root {
+  --hijau: #166534;
+  --hijau2: #15803d;
+  --hijau-bg: #f0fdf4;
+  --hijau-bd: #86efac;
+  --merah: #dc2626;
+  --merah-bg: #fef2f2;
+  --kuning: #d97706;
+  --kuning-bg: #fffbeb;
+  --biru: #1d4ed8;
+  --biru-bg: #eff6ff;
+  --abu: #64748b;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --border: #e2e8f0;
+  --teks1: #0f172a;
+  --teks2: #334155;
+  --teks3: #64748b;
+  --g4: #166534;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--teks1); min-height: 100vh; }
+
+/* ── HEADER ── */
+.app-header {
+  background: var(--hijau);
+  color: white;
+  padding: 14px 16px 12px;
+  position: sticky; top: 0; z-index: 100;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+}
+.app-header-top { display: flex; align-items: center; gap: 10px; }
+.app-logo { font-size: 22px; }
+.app-title { font-size: 15px; font-weight: 800; line-height: 1.2; }
+.app-subtitle { font-size: 11px; font-weight: 400; opacity: 0.8; }
+.app-siswa-info { 
+  margin-top: 10px; 
+  background: rgba(255,255,255,0.15); 
+  border-radius: 10px; 
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.siswa-nama { font-size: 13px; font-weight: 700; }
+.siswa-kelas { font-size: 11px; opacity: 0.85; }
+.btn-logout { 
+  background: rgba(255,255,255,0.2); 
+  border: none; color: white; 
+  font-size: 11px; font-weight: 600;
+  padding: 5px 10px; border-radius: 8px; cursor: pointer;
+  font-family: inherit;
+}
+
+/* ── LOGIN ── */
+#pg-login {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #166534 0%, #15803d 50%, #166534 100%);
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  padding: 24px 20px;
+}
+.login-logo { font-size: 56px; margin-bottom: 8px; }
+.login-sekolah { color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 4px; }
+.login-title { color: white; font-size: 22px; font-weight: 800; text-align: center; margin-bottom: 24px; }
+.login-card {
+  background: white; border-radius: 20px;
+  padding: 24px 20px; width: 100%; max-width: 360px;
+  box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+}
+.login-card h3 { font-size: 16px; font-weight: 800; color: var(--teks1); margin-bottom: 4px; }
+.login-card p { font-size: 12px; color: var(--teks3); margin-bottom: 20px; }
+.form-group { margin-bottom: 14px; }
+.form-group label { display: block; font-size: 12px; font-weight: 600; color: var(--teks2); margin-bottom: 6px; }
+.form-group input {
+  width: 100%; padding: 12px 14px;
+  border: 1.5px solid var(--border); border-radius: 12px;
+  font-size: 15px; font-family: inherit; color: var(--teks1);
+  background: var(--bg); outline: none;
+  transition: border-color 0.2s;
+}
+.form-group input:focus { border-color: var(--hijau2); }
+.btn-login {
+  width: 100%; padding: 14px;
+  background: var(--hijau); color: white;
+  border: none; border-radius: 12px;
+  font-size: 15px; font-weight: 700; font-family: inherit;
+  cursor: pointer; margin-top: 4px;
+  transition: background 0.2s;
+}
+.btn-login:active { background: #14532d; }
+.login-err { 
+  margin-top: 12px; padding: 10px 14px;
+  background: var(--merah-bg); color: var(--merah);
+  border-radius: 10px; font-size: 13px; font-weight: 600;
+  text-align: center; display: none;
+}
+
+/* ── MAIN APP ── */
+#pg-app { display: none; flex-direction: column; min-height: 100vh; }
+
+/* ── BOTTOM NAV ── */
+.bottom-nav {
+  position: fixed; bottom: 0; left: 0; right: 0;
+  background: white; border-top: 1px solid var(--border);
+  display: flex; z-index: 100;
+  box-shadow: 0 -2px 10px rgba(0,0,0,0.08);
+}
+.nav-item {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  padding: 10px 4px 12px; gap: 3px;
+  cursor: pointer; border: none; background: none;
+  font-family: inherit; color: var(--teks3);
+  transition: color 0.2s;
+}
+.nav-item.aktif { color: var(--hijau); }
+.nav-icon { font-size: 22px; }
+.nav-label { font-size: 10px; font-weight: 600; }
+
+/* ── CONTENT ── */
+.page-content { padding: 16px 16px 80px; flex: 1; }
+
+/* ── CARDS ── */
+.section-title {
+  font-size: 14px; font-weight: 800; color: var(--teks1);
+  margin-bottom: 12px; display: flex; align-items: center; gap: 6px;
+}
+.card {
+  background: white; border-radius: 14px;
+  border: 1px solid var(--border);
+  box-shadow: 0 1px 4px rgba(0,0,0,0.05);
+  overflow: hidden; margin-bottom: 10px;
+}
+.card-header {
+  padding: 12px 14px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-body { padding: 12px 14px; }
+
+/* ── STAT CARDS ── */
+.stats-row { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; margin-bottom: 14px; }
+.stat-card {
+  background: white; border-radius: 12px;
+  border: 1px solid var(--border);
+  padding: 10px 8px; text-align: center;
+}
+.stat-val { font-size: 22px; font-weight: 800; line-height: 1; }
+.stat-lbl { font-size: 10px; color: var(--teks3); font-weight: 600; margin-top: 3px; }
+
+/* ── PELANGGARAN LIST ── */
+.pel-item {
+  padding: 12px 0; border-bottom: 1px solid var(--border);
+  display: flex; align-items: flex-start; gap: 10px;
+}
+.pel-item:last-child { border-bottom: none; }
+.pel-no {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--bg); border: 1px solid var(--border);
+  font-size: 11px; font-weight: 700; color: var(--teks3);
+  display: flex; align-items: center; justify-content: center;
+  flex-shrink: 0; margin-top: 2px;
+}
+.pel-info { flex: 1; }
+.pel-jenis { font-size: 13px; font-weight: 700; color: var(--teks1); }
+.pel-meta { font-size: 11px; color: var(--teks3); margin-top: 2px; }
+.pel-poin {
+  font-size: 16px; font-weight: 800; color: var(--merah);
+  flex-shrink: 0;
+}
+.total-poin-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--merah-bg); color: var(--merah);
+  border-radius: 20px; padding: 6px 14px;
+  font-size: 13px; font-weight: 800;
+}
+
+/* ── KEHADIRAN ── */
+.hadir-stats { display: grid; grid-template-columns: repeat(4,1fr); gap: 6px; margin-bottom: 14px; }
+.hadir-stat {
+  background: white; border-radius: 10px;
+  border: 1px solid var(--border);
+  padding: 8px 4px; text-align: center;
+}
+.hadir-val { font-size: 18px; font-weight: 800; }
+.hadir-lbl { font-size: 9px; color: var(--teks3); font-weight: 600; }
+
+.date-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+.date-row input {
+  flex: 1; padding: 9px 10px;
+  border: 1.5px solid var(--border); border-radius: 10px;
+  font-size: 12px; font-family: inherit; background: white;
+  color: var(--teks1);
+}
+.date-row span { font-size: 11px; color: var(--teks3); }
+.btn-tampil {
+  padding: 9px 16px; background: var(--hijau); color: white;
+  border: none; border-radius: 10px; font-family: inherit;
+  font-size: 12px; font-weight: 700; cursor: pointer; white-space: nowrap;
+}
+
+/* ── HADIR TABLE ── */
+.hadir-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.hadir-table th {
+  background: var(--hijau); color: white;
+  padding: 8px 6px; text-align: center; font-weight: 700;
+}
+.hadir-table td { padding: 7px 6px; text-align: center; border-bottom: 1px solid var(--border); }
+.hadir-table tr:last-child td { border-bottom: none; }
+.hadir-table td:first-child { text-align: left; font-weight: 600; color: var(--teks2); }
+.pct-ok { color: var(--hijau); font-weight: 800; }
+.pct-warn { color: var(--kuning); font-weight: 800; }
+.pct-bad { color: var(--merah); font-weight: 800; }
+
+/* ── LOADING ── */
+.ld-wrap {
+  display: flex; flex-direction: column; align-items: center;
+  padding: 40px 20px; color: var(--teks3); gap: 10px;
+}
+.ld-spin {
+  width: 32px; height: 32px; border: 3px solid var(--border);
+  border-top-color: var(--hijau); border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+
+.empty-state {
+  text-align: center; padding: 40px 20px; color: var(--teks3);
+}
+.empty-icon { font-size: 40px; margin-bottom: 8px; }
+.empty-txt { font-size: 13px; }
+
+/* ── POIN INDICATOR ── */
+.poin-ok { color: var(--hijau); }
+.poin-warn { color: var(--kuning); }
+.poin-bad { color: var(--merah); }
+
+/* ── PROGRESS BAR ── */
+.progress-wrap { margin-top: 8px; }
+.progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+.progress-fill { height: 100%; border-radius: 3px; transition: width 0.5s; }
+</style>
+</head>
+<body>
+
+<!-- ── HALAMAN LOGIN ── -->
+<div id="pg-login">
+  <div class="login-logo">📚</div>
+  <div class="login-sekolah">SMP Negeri 05 Sarolangun</div>
+  <div class="login-title">Pantau Siswa</div>
+  <div class="login-card">
+    <h3>Masuk sebagai Orang Tua</h3>
+    <p>Gunakan NISN dan tanggal lahir siswa untuk masuk</p>
+    <div class="form-group">
+      <label>NISN Siswa</label>
+      <input type="number" id="inp-nisn" placeholder="Contoh: 0123456789" inputmode="numeric">
+    </div>
+    <div class="form-group">
+      <label>Tanggal Lahir Siswa</label>
+      <input type="date" id="inp-tgl">
+    </div>
+    <button class="btn-login" id="btn-masuk" onclick="doLogin()">Masuk</button>
+    <div class="login-err" id="login-err"></div>
+  </div>
+</div>
+
+<!-- ── HALAMAN APP ── -->
+<div id="pg-app">
+  <!-- Header -->
+  <div class="app-header">
+    <div class="app-header-top">
+      <div class="app-logo">📚</div>
+      <div>
+        <div class="app-title">Pantau Siswa</div>
+        <div class="app-subtitle">SMP Negeri 05 Sarolangun</div>
+      </div>
+    </div>
+    <div class="app-siswa-info" id="siswa-info-bar" style="display:none">
+      <div>
+        <div class="siswa-nama" id="siswa-nama-hdr">—</div>
+        <div class="siswa-kelas" id="siswa-kelas-hdr">—</div>
+      </div>
+      <button class="btn-logout" onclick="doLogout()">Keluar</button>
+    </div>
+  </div>
+
+  <!-- Content -->
+  <div class="page-content">
+    <!-- Tab Pelanggaran -->
+    <div id="tab-perilaku" style="display:none">
+      <div class="section-title">📋 Catatan Perilaku</div>
+      <div id="perilaku-content">
+        <div class="ld-wrap"><div class="ld-spin"></div><div>Memuat data...</div></div>
+      </div>
+    </div>
+
+    <!-- Tab Kehadiran -->
+    <div id="tab-hadir" style="display:none">
+      <div class="section-title">📅 Rekap Kehadiran</div>
+      <div class="date-row">
+        <input type="date" id="hadir-dari">
+        <span>s.d.</span>
+        <input type="date" id="hadir-sampai">
+        <button class="btn-tampil" onclick="loadHadir()">Tampilkan</button>
+      </div>
+      <div id="hadir-content">
+        <div class="ld-wrap"><div class="ld-spin"></div><div>Memuat data...</div></div>
+      </div>
+    </div>
+
+    <!-- Tab Riwayat Hadir -->
+    <div id="tab-riwayat" style="display:none">
+      <div class="section-title">🗓️ Riwayat Hadir</div>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <select id="riwayat-bulan" style="flex:1;padding:9px 10px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;background:white;color:var(--teks1);">
+          <option value="1">Januari</option><option value="2">Februari</option>
+          <option value="3">Maret</option><option value="4">April</option>
+          <option value="5">Mei</option><option value="6">Juni</option>
+          <option value="7">Juli</option><option value="8">Agustus</option>
+          <option value="9">September</option><option value="10">Oktober</option>
+          <option value="11">November</option><option value="12">Desember</option>
+        </select>
+        <select id="riwayat-tahun" style="width:90px;padding:9px 10px;border:1.5px solid var(--border);border-radius:10px;font-size:13px;font-family:inherit;background:white;color:var(--teks1);">
+          <option value="2025">2025</option>
+          <option value="2026">2026</option>
+        </select>
+        <button onclick="loadRiwayat()" style="padding:9px 14px;background:#166534;color:white;border:none;border-radius:10px;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;">Tampilkan</button>
+      </div>
+      <div id="riwayat-content">
+        <div class="ld-wrap"><div class="ld-spin"></div><div>Memuat data...</div></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div class="bottom-nav">
+    <button class="nav-item aktif" id="nav-perilaku" onclick="gotoTab('perilaku')">
+      <div class="nav-icon">📋</div>
+      <div class="nav-label">Catatan Perilaku</div>
+    </button>
+    <button class="nav-item" id="nav-hadir" onclick="gotoTab('hadir')">
+      <div class="nav-icon">📅</div>
+      <div class="nav-label">Kehadiran</div>
+    </button>
+    <button class="nav-item" id="nav-riwayat" onclick="gotoTab('riwayat')">
+      <div class="nav-icon">🗓️</div>
+      <div class="nav-label">Riwayat Hadir</div>
+    </button>
+  </div>
+</div>
+
+<script>
+const CFG = {
+  APPS_SCRIPT_URL: 'https://script.google.com/macros/s/AKfycbyB2ESAAwcPW2vufabMbbLGkEEcp-_YksDtU_9QCW7_e5tXzxQA98TWfcR8HrqtiRaoJw/exec',
+  NAMA_SEKOLAH: 'SMP Negeri 05 Sarolangun'
+};
+
+const $ = id => document.getElementById(id);
+let siswaData = null; // {nisn, nama, kelas, tglLahir}
+
+// ── INIT ──
+function init(){
+  // Cek session tersimpan
+  try{
+    const saved = localStorage.getItem('pantau_siswa');
+    if(saved){
+      siswaData = JSON.parse(saved);
+      masukApp();
+      return;
+    }
+  }catch(e){}
+  $('pg-login').style.display = 'flex';
+}
+
+// ── LOGIN ──
+async function doLogin(){
+  const nisn = $('inp-nisn').value.trim();
+  const tgl = $('inp-tgl').value;
+  if(!nisn || !tgl){ showErr('NISN dan tanggal lahir wajib diisi'); return; }
+
+  const btn = $('btn-masuk');
+  btn.textContent = '⏳ Memverifikasi...';
+  btn.disabled = true;
+  $('login-err').style.display = 'none';
+
+  try{
+    const r = await fetch(CFG.APPS_SCRIPT_URL + `?action=loginSiswa&nisn=${encodeURIComponent(nisn)}&tglLahir=${encodeURIComponent(tgl)}`);
+    const d = await r.json();
+    if(d.ok && d.siswa){
+      siswaData = d.siswa;
+      localStorage.setItem('pantau_siswa', JSON.stringify(siswaData));
+      masukApp();
+    } else {
+      showErr(d.error || 'NISN atau tanggal lahir tidak cocok');
+    }
+  }catch(e){
+    showErr('Gagal terhubung ke server. Periksa koneksi internet.');
+  }finally{
+    btn.textContent = 'Masuk';
+    btn.disabled = false;
+  }
+}
+
+function showErr(msg){
+  const el = $('login-err');
+  el.textContent = msg;
+  el.style.display = 'block';
+}
+
+// ── MASUK APP ──
+function masukApp(){
+  $('pg-login').style.display = 'none';
+  $('pg-app').style.display = 'flex';
+  $('pg-app').style.flexDirection = 'column';
+
+  // Update header
+  $('siswa-nama-hdr').textContent = siswaData.nama || '—';
+  $('siswa-kelas-hdr').textContent = 'Kelas ' + (siswaData.kelas || '—');
+  $('siswa-info-bar').style.display = 'flex';
+
+  // Set dropdown riwayat ke bulan & tahun ini
+  const now2 = new Date(new Date().getTime()+7*60*60*1000);
+  const rBulan = document.getElementById('riwayat-bulan');
+  const rTahun = document.getElementById('riwayat-tahun');
+  if(rBulan) rBulan.value = String(now2.getUTCMonth()+1);
+  if(rTahun) rTahun.value = String(now2.getUTCFullYear());
+
+  // Set tanggal default kehadiran (bulan ini)
+  const now = new Date();
+  const y = now.getFullYear(), m = String(now.getMonth()+1).padStart(2,'0');
+  $('hadir-dari').value = `${y}-${m}-01`;
+  $('hadir-sampai').value = `${y}-${m}-${String(now.getDate()).padStart(2,'0')}`;
+
+  gotoTab('perilaku');
+}
+
+// ── LOGOUT ──
+function doLogout(){
+  if(!confirm('Keluar dari akun?')) return;
+  localStorage.removeItem('pantau_siswa');
+  siswaData = null;
+  $('pg-app').style.display = 'none';
+  $('pg-login').style.display = 'flex';
+  $('inp-nisn').value = '';
+  $('inp-tgl').value = '';
+  $('login-err').style.display = 'none';
+}
+
+// ── NAVIGASI TAB ──
+function gotoTab(tab){
+  ['perilaku','hadir','riwayat'].forEach(t=>{
+    $('tab-'+t).style.display = t===tab ? 'block' : 'none';
+    $('nav-'+t).classList.toggle('aktif', t===tab);
+  });
+  if(tab === 'perilaku') loadPerilaku();
+  if(tab === 'hadir') loadHadir();
+  if(tab === 'riwayat') loadRiwayat();
+}
+
+// ── LOAD CATATAN PERILAKU ──
+let perilakuLoaded = false;
+async function loadPerilaku(){
+  if(perilakuLoaded) return;
+  $('perilaku-content').innerHTML = '<div class="ld-wrap"><div class="ld-spin"></div><div>Memuat data...</div></div>';
+  try{
+    const r = await fetch(CFG.APPS_SCRIPT_URL + `?action=getRekapIndividu&nama=${encodeURIComponent(siswaData.nama)}&kelas=${encodeURIComponent(siswaData.kelas)}`);
+    const d = await r.json();
+    renderPerilaku(d.data || []);
+    perilakuLoaded = true;
+  }catch(e){
+    $('perilaku-content').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-txt">Gagal memuat data</div></div>';
+  }
+}
+
+function renderPerilaku(data){
+  const el = $('perilaku-content');
+  const totalPoin = data.reduce((s,r)=>s+(r.poin||0), 0);
+  const poinClass = totalPoin === 0 ? 'poin-ok' : totalPoin <= 20 ? 'poin-warn' : 'poin-bad';
+  const poinLabel = totalPoin === 0 ? '✅ Baik' : totalPoin <= 20 ? '⚠️ Perlu Perhatian' : '❗ Perlu Tindakan';
+
+  let html = `
+    <div class="card" style="margin-bottom:14px">
+      <div class="card-body" style="display:flex;align-items:center;justify-content:space-between">
+        <div>
+          <div style="font-size:13px;font-weight:700;color:var(--teks1)">${siswaData.nama}</div>
+          <div style="font-size:11px;color:var(--teks3)">Kelas ${siswaData.kelas}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:11px;color:var(--teks3);margin-bottom:2px">Total Poin</div>
+          <div class="total-poin-badge ${poinClass}" style="background:${totalPoin===0?'var(--hijau-bg)':totalPoin<=20?'var(--kuning-bg)':'var(--merah-bg)'}">
+            <span style="font-size:18px;font-weight:800">${totalPoin}</span>
+            <span style="font-size:10px">${poinLabel}</span>
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  if(!data.length){
+    html += `<div class="empty-state">
+      <div class="empty-icon">🎉</div>
+      <div class="empty-txt" style="font-weight:700;color:var(--hijau)">Tidak ada catatan perilaku</div>
+      <div class="empty-txt" style="margin-top:4px">Pertahankan sikap yang baik!</div>
+    </div>`;
+  } else {
+    html += `<div class="card"><div class="card-body">`;
+    data.forEach((r,i)=>{
+      html += `<div class="pel-item">
+        <div class="pel-no">${i+1}</div>
+        <div class="pel-info">
+          <div class="pel-jenis">${r.pelanggaran||'-'}</div>
+          <div class="pel-meta">${r.pelapor||'-'} · ${r.statusPelapor||'-'} · ${r.tanggal||'-'}</div>
+        </div>
+        <div class="pel-poin">+${r.poin||0}</div>
+      </div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  el.innerHTML = html;
+}
+
+// ── LOAD KEHADIRAN ──
+async function loadHadir(){
+  const dari = $('hadir-dari').value;
+  const sampai = $('hadir-sampai').value;
+  if(!dari || !sampai){ return; }
+
+  $('hadir-content').innerHTML = '<div class="ld-wrap"><div class="ld-spin"></div><div>Memuat data...</div></div>';
+  try{
+    const r = await fetch(CFG.APPS_SCRIPT_URL + `?action=getRekapHadirSiswa&dari=${encodeURIComponent(dari)}&sampai=${encodeURIComponent(sampai)}&kelas=${encodeURIComponent(siswaData.kelas)}`);
+    const d = await r.json();
+    if(!d.ok){ throw new Error(d.error||'Gagal'); }
+
+    // Cari data siswa ini berdasarkan nama
+    const siswaRekap = (d.data||[]).find(s=>s.nama===siswaData.nama);
+    renderHadir(siswaRekap, d.hariEfektif||0, dari, sampai);
+  }catch(e){
+    $('hadir-content').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-txt">Gagal memuat data</div></div>';
+  }
+}
+
+function renderHadir(s, hariEfektif, dari, sampai){
+  const el = $('hadir-content');
+  if(!s){
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-txt">Data tidak ditemukan untuk rentang ini</div></div>';
+    return;
+  }
+
+  const hadir = s.hadir||0;
+  const onTime = s.onTime||0;
+  const terlambat = s.terlambat||0;
+  const izin = s.izin||0;
+  const sakit = s.sakit||0;
+  const alpa = s.alpa||0;
+  const pct = hariEfektif > 0 ? Math.round(hadir/hariEfektif*100) : 0;
+  const pctClass = pct >= 90 ? 'pct-ok' : pct >= 75 ? 'pct-warn' : 'pct-bad';
+  const pctLabel = pct >= 90 ? '✅ Sangat Baik' : pct >= 75 ? '⚠️ Cukup' : '❗ Kurang';
+
+  // Format tanggal
+  const fmtTgl = v => new Date(v).toLocaleDateString('id-ID',{day:'numeric',month:'long',year:'numeric'});
+
+  el.innerHTML = `
+    <div class="card" style="margin-bottom:12px">
+      <div class="card-body">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">
+          <div>
+            <div style="font-size:12px;color:var(--teks3)">Periode</div>
+            <div style="font-size:12px;font-weight:700">${fmtTgl(dari)} s.d. ${fmtTgl(sampai)}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:11px;color:var(--teks3)">Hari Efektif</div>
+            <div style="font-size:16px;font-weight:800">${hariEfektif} hari</div>
+          </div>
+        </div>
+        <div style="background:var(--bg);border-radius:10px;padding:10px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center">
+            <div>
+              <div style="font-size:11px;color:var(--teks3)">Persentase Kehadiran</div>
+              <div style="font-size:28px;font-weight:800" class="${pctClass}">${pct}%</div>
+              <div style="font-size:11px;font-weight:600" class="${pctClass}">${pctLabel}</div>
+            </div>
+            <div style="text-align:right">
+              <div style="font-size:11px;color:var(--teks3)">Total Hadir</div>
+              <div style="font-size:28px;font-weight:800;color:var(--hijau)">${hadir}</div>
+              <div style="font-size:11px;color:var(--teks3)">dari ${hariEfektif} hari</div>
+            </div>
+          </div>
+          <div class="progress-wrap" style="margin-top:10px">
+            <div class="progress-bar">
+              <div class="progress-fill" style="width:${pct}%;background:${pct>=90?'#16a34a':pct>=75?'#d97706':'#dc2626'}"></div>
+            </div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:6px">
+          ${[
+            {l:'OnTime',v:onTime,c:'var(--hijau)'},
+            {l:'Terlambat',v:terlambat,c:'var(--kuning)'},
+            {l:'Izin',v:izin,c:'var(--biru)'},
+            {l:'Sakit',v:sakit,c:'#0891b2'},
+            {l:'Alpa',v:alpa,c:'var(--merah)'},
+          ].map(x=>`
+            <div class="hadir-stat">
+              <div class="hadir-val" style="color:${x.c}">${x.v}</div>
+              <div class="hadir-lbl">${x.l}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+    </div>`;
+}
+
+// ── LOAD RIWAYAT HADIR ──
+async function loadRiwayat(){
+  const bulan = document.getElementById('riwayat-bulan').value;
+  const tahun = document.getElementById('riwayat-tahun').value;
+  const bln = String(bulan).padStart(2,'0');
+  const lastDay = new Date(parseInt(tahun), parseInt(bulan), 0).getDate();
+  const dari = `${tahun}-${bln}-01`;
+  const sampai = `${tahun}-${bln}-${String(lastDay).padStart(2,'0')}`;
+
+  document.getElementById('riwayat-content').innerHTML = '<div class="ld-wrap"><div class="ld-spin"></div><div>Memuat data...</div></div>';
+  try{
+    // Fetch absensi + libur bersamaan
+    const [rAbsen, rLibur] = await Promise.all([
+      fetch(CFG.APPS_SCRIPT_URL+`?action=getRekapHadirSiswa&dari=${encodeURIComponent(dari)}&sampai=${encodeURIComponent(sampai)}&kelas=${encodeURIComponent(siswaData.kelas)}`).then(r=>r.json()),
+      fetch(CFG.APPS_SCRIPT_URL+`?action=getLibur`).then(r=>r.json())
+    ]);
+
+    // Cari absensi siswa ini
+    const absensiSiswa = (rAbsen.ok ? rAbsen.data||[] : []).find(s=>s.nama===siswaData.nama);
+    const liburList = rLibur.ok ? rLibur.data||[] : [];
+
+    // Fetch detail absensi per hari dari getRekap
+    const rDetail = await fetch(CFG.APPS_SCRIPT_URL+`?action=getRekap&dari=${encodeURIComponent(dari)}&sampai=${encodeURIComponent(sampai)}&kelas=${encodeURIComponent(siswaData.kelas)}`).then(r=>r.json());
+    const detailList = (rDetail.ok ? rDetail.data||[] : []).filter(d=>d.nama===siswaData.nama||d.nisn===siswaData.nisn);
+
+    renderRiwayat(dari, sampai, detailList, liburList, parseInt(tahun), parseInt(bulan));
+  }catch(e){
+    document.getElementById('riwayat-content').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-txt">Gagal memuat data</div></div>';
+  }
+}
+
+function renderRiwayat(dari, sampai, detailList, liburList, tahun, bulan){
+  const el = document.getElementById('riwayat-content');
+  const HARI = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const BULAN_NAMA = ['','Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+
+  // Map tanggal ke detail absensi
+  const absenMap = {};
+  detailList.forEach(d=>{
+    const tgl = d.tanggal||'';
+    // Format mungkin dd/MM/yyyy → convert ke yyyy-MM-dd
+    let iso = tgl;
+    if(tgl.includes('/')){const p=tgl.split('/');iso=`${p[2]}-${p[1].padStart(2,'0')}-${p[0].padStart(2,'0')}`;}
+    absenMap[iso] = d;
+  });
+
+  // Map libur
+  const liburMap = {};
+  liburList.forEach(l=>{ liburMap[l.tanggal] = l.keterangan||'Libur'; });
+
+  // Generate semua hari dalam bulan
+  const rows = [];
+  const d = new Date(tahun, bulan-1, 1);
+  while(d.getMonth() === bulan-1){
+    const iso = `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+    const hariIdx = d.getDay();
+    const hariNama = HARI[hariIdx];
+    if(hariIdx !== 0){ // Skip Minggu
+      rows.push({ iso, tgl: d.getDate(), hari: hariNama, libur: liburMap[iso]||null, absen: absenMap[iso]||null });
+    }
+    d.setDate(d.getDate()+1);
+  }
+
+  if(!rows.length){ el.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div class="empty-txt">Tidak ada data</div></div>'; return; }
+
+  const STATUS_BADGE = {
+    'OnTime':    {bg:'#f0fdf4',c:'#166534',txt:'OnTime'},
+    'Terlambat': {bg:'#fffbeb',c:'#92400e',txt:'Terlambat'},
+    'Alpa':      {bg:'#fef2f2',c:'#991b1b',txt:'Alpa'},
+    'Izin':      {bg:'#eff6ff',c:'#1e40af',txt:'Izin'},
+    'Sakit':     {bg:'#e0f2fe',c:'#075985',txt:'Sakit'},
+  };
+
+  let html = `<div style="font-size:12px;font-weight:700;color:var(--teks3);margin-bottom:8px">${BULAN_NAMA[bulan]} ${tahun} — ${rows.length} hari sekolah</div>`;
+  html += `<div style="display:grid;grid-template-columns:1fr 70px 90px;gap:4px;padding:6px 10px;background:var(--bg);border-radius:10px;margin-bottom:6px;">
+    <span style="font-size:10px;font-weight:700;color:var(--teks3)">Tanggal</span>
+    <span style="font-size:10px;font-weight:700;color:var(--teks3);text-align:center">Jam Masuk</span>
+    <span style="font-size:10px;font-weight:700;color:var(--teks3);text-align:center">Status</span>
+  </div>`;
+
+  rows.forEach(r=>{
+    const tglFmt = `${String(r.tgl).padStart(2,'0')} ${BULAN_NAMA[bulan]}`;
+    if(r.libur){
+      html += `<div style="display:grid;grid-template-columns:1fr 70px 90px;gap:4px;padding:9px 10px;background:white;border:1px solid var(--border);border-radius:10px;margin-bottom:4px;align-items:center;opacity:0.6">
+        <div><div style="font-size:12px;font-weight:600;color:var(--teks1)">${tglFmt}</div><div style="font-size:10px;color:var(--teks3)">${r.hari}</div></div>
+        <div style="text-align:center;font-size:12px;color:var(--teks3)">—</div>
+        <div style="text-align:center"><span style="background:#f1f5f9;color:#64748b;padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600">${r.libur}</span></div>
+      </div>`;
+    } else {
+      const st = r.absen ? (r.absen.status||'') : '';
+      const jam = r.absen ? (r.absen.jamMasuk||'—') : '—';
+      const badge = STATUS_BADGE[st] || {bg:'#f8fafc',c:'#94a3b8',txt:st||'—'};
+      html += `<div style="display:grid;grid-template-columns:1fr 70px 90px;gap:4px;padding:9px 10px;background:white;border:1px solid var(--border);border-radius:10px;margin-bottom:4px;align-items:center">
+        <div><div style="font-size:12px;font-weight:600;color:var(--teks1)">${tglFmt}</div><div style="font-size:10px;color:var(--teks3)">${r.hari}</div></div>
+        <div style="text-align:center;font-size:12px;color:var(--teks3)">${jam}</div>
+        <div style="text-align:center"><span style="background:${badge.bg};color:${badge.c};padding:2px 8px;border-radius:20px;font-size:10px;font-weight:600">${badge.txt}</span></div>
+      </div>`;
+    }
+  });
+
+  el.innerHTML = html;
+}
+
+// Enter key login
+document.addEventListener('keydown', e => {
+  if(e.key === 'Enter' && $('pg-login').style.display !== 'none') doLogin();
+});
+
+// Start
+init();
+</script>
+</body>
+</html>
