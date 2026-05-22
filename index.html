@@ -324,6 +324,14 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); colo
       </div>
     </div>
 
+    <!-- Tab Pembinaan -->
+    <div id="tab-pembinaan" style="display:none">
+      <div class="section-title">🤝 Riwayat Pembinaan</div>
+      <div id="pembinaan-content">
+        <div class="ld-wrap"><div class="ld-spin"></div><div>Memuat data...</div></div>
+      </div>
+    </div>
+
     <!-- Tab Riwayat Hadir -->
     <div id="tab-riwayat" style="display:none">
       <div class="section-title">🗓️ Riwayat Hadir</div>
@@ -361,6 +369,10 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); colo
     <button class="nav-item" id="nav-riwayat" onclick="gotoTab('riwayat')">
       <div class="nav-icon">🗓️</div>
       <div class="nav-label">Riwayat Hadir</div>
+    </button>
+    <button class="nav-item" id="nav-pembinaan" onclick="gotoTab('pembinaan')">
+      <div class="nav-icon">🤝</div>
+      <div class="nav-label">Pembinaan</div>
     </button>
   </div>
 </div>
@@ -464,13 +476,14 @@ function doLogout(){
 
 // ── NAVIGASI TAB ──
 function gotoTab(tab){
-  ['perilaku','hadir','riwayat'].forEach(t=>{
+  ['perilaku','hadir','riwayat','pembinaan'].forEach(t=>{
     $('tab-'+t).style.display = t===tab ? 'block' : 'none';
     $('nav-'+t).classList.toggle('aktif', t===tab);
   });
   if(tab === 'perilaku') loadPerilaku();
   if(tab === 'hadir') loadHadir();
   if(tab === 'riwayat') loadRiwayat();
+  if(tab === 'pembinaan') loadPembinaan();
 }
 
 // ── LOAD CATATAN PERILAKU ──
@@ -736,6 +749,60 @@ function renderRiwayat(dari, sampai, detailList, liburList, tahun, bulan){
     }
   });
 
+  el.innerHTML = html;
+}
+
+// ── LOAD PEMBINAAN ──
+let pembinaanLoaded = false;
+async function loadPembinaan(){
+  if(pembinaanLoaded) return;
+  document.getElementById('pembinaan-content').innerHTML = '<div class="ld-wrap"><div class="ld-spin"></div><div>Memuat data...</div></div>';
+  try{
+    const r = await fetch(CFG.APPS_SCRIPT_URL+`?action=getPembinaanSiswa&nama=${encodeURIComponent(siswaData.nama)}&kelas=${encodeURIComponent(siswaData.kelas)}`);
+    const d = await r.json();
+    renderPembinaan(d.data||[]);
+    pembinaanLoaded = true;
+  }catch(e){
+    document.getElementById('pembinaan-content').innerHTML = '<div class="empty-state"><div class="empty-icon">⚠️</div><div class="empty-txt">Gagal memuat data</div></div>';
+  }
+}
+
+function renderPembinaan(data){
+  const el = document.getElementById('pembinaan-content');
+  if(!data.length){
+    el.innerHTML = '<div class="empty-state"><div class="empty-icon">✅</div><div class="empty-txt" style="font-weight:700;color:var(--hijau)">Tidak ada catatan pembinaan</div></div>';
+    return;
+  }
+  const HARI = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+  const fmtTgl = tgl => {
+    try{
+      const p=tgl.split('/');
+      const d=p.length===3?new Date(p[2],p[1]-1,p[0]):new Date(tgl);
+      if(isNaN(d)) return tgl;
+      return HARI[d.getDay()]+', '+tgl;
+    }catch(e){return tgl;}
+  };
+
+  const WARNA = {
+    'Pembinaan Biasa':   {bg:'#eff6ff',c:'#1e40af'},
+    'Pembinaan 25 Poin': {bg:'#fffbeb',c:'#92400e'},
+    'Pembinaan 50 Poin': {bg:'#fff7ed',c:'#9a3412'},
+    'Pembinaan 75 Poin': {bg:'#fef2f2',c:'#991b1b'},
+  };
+
+  let html = `<div class="card"><div class="card-body">`;
+  data.forEach((r,i)=>{
+    const w = WARNA[r.pembinaan]||{bg:'#f8fafc',c:'#475569'};
+    html += `<div class="pel-item">
+      <div class="pel-no">${i+1}</div>
+      <div class="pel-info">
+        <div class="pel-jenis">${r.pembinaan}</div>
+        <div class="pel-meta">${fmtTgl(r.tanggal)}</div>
+      </div>
+      <span style="background:${w.bg};color:${w.c};padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;align-self:flex-start">${r.statusPelapor||'-'}</span>
+    </div>`;
+  });
+  html += `</div></div>`;
   el.innerHTML = html;
 }
 
