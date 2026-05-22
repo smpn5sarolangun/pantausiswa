@@ -73,8 +73,8 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); colo
 #pg-login {
   min-height: 100vh;
   background: linear-gradient(135deg, #166534 0%, #15803d 50%, #166534 100%);
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  padding: 24px 20px;
+  display: flex; flex-direction: column; align-items: center; justify-content: flex-start;
+  padding: 48px 20px 24px;
 }
 .login-logo { font-size: 56px; margin-bottom: 8px; }
 .login-sekolah { color: rgba(255,255,255,0.9); font-size: 13px; font-weight: 600; text-align: center; margin-bottom: 4px; }
@@ -262,8 +262,8 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); colo
 <!-- ── HALAMAN LOGIN ── -->
 <div id="pg-login">
   <div class="login-logo">📚</div>
-  <div class="login-sekolah">SMP Negeri 05 Sarolangun</div>
-  <div class="login-title">Pantau Siswa</div>
+  <div class="login-sekolah">SMP NEGERI 05 SAROLANGUN</div>
+  <div class="login-title">PANTAU SISWA</div>
   <div class="login-card">
     <h3>Masuk sebagai Orang Tua</h3>
     <p>Gunakan NISN dan tanggal lahir siswa untuk masuk</p>
@@ -524,11 +524,10 @@ function renderPerilaku(data){
         <div class="pel-no">${i+1}</div>
         <div class="pel-info">
           <div class="pel-jenis">${r.pelanggaran||'-'}</div>
-          <div class="pel-meta">${r.pelapor||'-'} · ${r.statusPelapor||'-'} · ${(()=>{
+          <div class="pel-meta">${(()=>{
             if(!r.tanggal) return '-';
             try{
               const HARI=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-              // format dd/MM/yyyy atau yyyy-MM-dd
               let d;
               const p = r.tanggal.split('/');
               if(p.length===3) d=new Date(p[2],p[1]-1,p[0]);
