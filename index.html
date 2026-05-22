@@ -797,9 +797,14 @@ function renderPembinaan(data){
       <div class="pel-no">${i+1}</div>
       <div class="pel-info">
         <div class="pel-jenis">${r.pembinaan}</div>
+        <div class="pel-meta">${r.namaGuru||'-'} · ${r.statusPelapor||'-'}</div>
+        ${r.ortuWali?`<div class="pel-meta" style="color:#166534">👨‍👩‍👧 ${r.ortuWali}</div>`:''}
         <div class="pel-meta">${fmtTgl(r.tanggal)}</div>
       </div>
-      <span style="background:${w.bg};color:${w.c};padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;align-self:flex-start">${r.statusPelapor||'-'}</span>
+      <div style="text-align:right;flex-shrink:0">
+        <div style="font-size:10px;color:var(--teks3)">Poin saat itu</div>
+        <div style="font-size:18px;font-weight:800;color:${(r.totalPoin||0)>=50?'var(--merah)':(r.totalPoin||0)>=25?'var(--kuning)':'var(--hijau)'}">${r.totalPoin||0}</div>
+      </div>
     </div>`;
   });
   html += `</div></div>`;
