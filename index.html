@@ -639,9 +639,9 @@ async function loadRiwayat(){
     const absensiSiswa = (rAbsen.ok ? rAbsen.data||[] : []).find(s=>s.nama===siswaData.nama);
     const liburList = rLibur.ok ? rLibur.data||[] : [];
 
-    // Fetch detail absensi per hari dari getRekap
-    const rDetail = await fetch(CFG.APPS_SCRIPT_URL+`?action=getRekap&dari=${encodeURIComponent(dari)}&sampai=${encodeURIComponent(sampai)}&kelas=${encodeURIComponent(siswaData.kelas)}`).then(r=>r.json());
-    const detailList = (rDetail.ok ? rDetail.data||[] : []).filter(d=>d.nama===siswaData.nama||d.nisn===siswaData.nisn);
+    // Fetch detail absensi per hari pakai getRiwayatHadirSiswa (tanpa token)
+    const rDetail = await fetch(CFG.APPS_SCRIPT_URL+`?action=getRiwayatHadirSiswa&nisn=${encodeURIComponent(siswaData.nisn)}&dari=${encodeURIComponent(dari)}&sampai=${encodeURIComponent(sampai)}`).then(r=>r.json());
+    const detailList = rDetail.ok ? rDetail.data||[] : [];
 
     renderRiwayat(dari, sampai, detailList, liburList, parseInt(tahun), parseInt(bulan));
   }catch(e){
