@@ -4,6 +4,13 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
 <title>Pantau Siswa — SMP Negeri 05 Sarolangun</title>
+<meta name="theme-color" content="#166534">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Pantau Siswa">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icon-192x192.png">
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
 
@@ -517,7 +524,19 @@ function renderPerilaku(data){
         <div class="pel-no">${i+1}</div>
         <div class="pel-info">
           <div class="pel-jenis">${r.pelanggaran||'-'}</div>
-          <div class="pel-meta">${r.pelapor||'-'} · ${r.statusPelapor||'-'} · ${r.tanggal||'-'}</div>
+          <div class="pel-meta">${r.pelapor||'-'} · ${r.statusPelapor||'-'} · ${(()=>{
+            if(!r.tanggal) return '-';
+            try{
+              const HARI=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+              // format dd/MM/yyyy atau yyyy-MM-dd
+              let d;
+              const p = r.tanggal.split('/');
+              if(p.length===3) d=new Date(p[2],p[1]-1,p[0]);
+              else d=new Date(r.tanggal);
+              if(isNaN(d)) return r.tanggal;
+              return HARI[d.getDay()]+', '+r.tanggal;
+            }catch(e){return r.tanggal;}
+          })()}</div>
         </div>
         <div class="pel-poin">+${r.poin||0}</div>
       </div>`;
@@ -725,6 +744,11 @@ function renderRiwayat(dari, sampai, detailList, liburList, tahun, bulan){
 document.addEventListener('keydown', e => {
   if(e.key === 'Enter' && $('pg-login').style.display !== 'none') doLogin();
 });
+
+// Register Service Worker
+if('serviceWorker' in navigator){
+  navigator.serviceWorker.register('./sw.js').catch(()=>{});
+}
 
 // Start
 init();
