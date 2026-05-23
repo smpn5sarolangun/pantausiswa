@@ -36,6 +36,7 @@
 }
 
 * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
+html, body { overflow-x: hidden; max-width: 100vw; }
 body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--teks1); min-height: 100vh; }
 
 /* ── HEADER ── */
@@ -131,6 +132,9 @@ body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); colo
   transition: color 0.2s;
 }
 .nav-item.aktif { color: var(--hijau); }
+.nav-item.aktif .nav-icon { transform: scale(1.1); }
+.nav-item.aktif .nav-label { font-weight: 800; }
+.nav-item.aktif::after { content:''; display:block; width:24px; height:3px; background:var(--hijau); border-radius:2px; margin:2px auto 0; }
 .nav-icon { font-size: 22px; }
 .nav-label { font-size: 10px; font-weight: 600; }
 
@@ -504,8 +508,10 @@ async function loadPerilaku(){
 function renderPerilaku(data){
   const el = $('perilaku-content');
   const totalPoin = data.reduce((s,r)=>s+(r.poin||0), 0);
-  const poinClass = totalPoin === 0 ? 'poin-ok' : totalPoin <= 20 ? 'poin-warn' : 'poin-bad';
-  const poinLabel = totalPoin === 0 ? '✅ Baik' : totalPoin <= 20 ? '⚠️ Perlu Perhatian' : '❗ Perlu Tindakan';
+  const poinClass = totalPoin === 0 ? 'poin-ok' : totalPoin < 25 ? 'poin-warn' : totalPoin < 50 ? 'poin-bad' : totalPoin < 75 ? 'poin-bad' : 'poin-bad';
+  const poinColor = totalPoin === 0 ? '#166534' : totalPoin < 25 ? '#92400e' : totalPoin < 50 ? '#c2410c' : totalPoin < 75 ? '#dc2626' : '#991b1b';
+  const poinBg = totalPoin === 0 ? '#f0fdf4' : totalPoin < 25 ? '#fffbeb' : totalPoin < 50 ? '#fff7ed' : totalPoin < 75 ? '#fef2f2' : '#fef2f2';
+  const poinLabel = totalPoin === 0 ? '✅ Tidak Ada Catatan' : totalPoin < 25 ? '⚠️ Perlu Perhatian' : totalPoin < 50 ? '🟠 Perlu Pembinaan' : totalPoin < 75 ? '🔴 Perlu Pendampingan' : '🚨 Perlu Penanganan Serius';
 
   let html = `
     <div class="card" style="margin-bottom:14px">
@@ -516,9 +522,10 @@ function renderPerilaku(data){
         </div>
         <div style="text-align:right">
           <div style="font-size:11px;color:var(--teks3);margin-bottom:2px">Total Poin</div>
-          <div class="total-poin-badge ${poinClass}" style="background:${totalPoin===0?'var(--hijau-bg)':totalPoin<=20?'var(--kuning-bg)':'var(--merah-bg)'}">
-            <span style="font-size:18px;font-weight:800">${totalPoin}</span>
-            <span style="font-size:10px">${poinLabel}</span>
+          <div style="text-align:right">
+            <div style="font-size:11px;color:var(--teks3);margin-bottom:2px">Total Poin</div>
+            <div style="font-size:28px;font-weight:800;color:${poinColor};line-height:1">${totalPoin}</div>
+            ${poinLabel?`<div style="background:${poinBg};color:${poinColor};padding:3px 10px;border-radius:20px;font-size:10px;font-weight:700;margin-top:4px;display:inline-block">${poinLabel}</div>`:''}
           </div>
         </div>
       </div>
